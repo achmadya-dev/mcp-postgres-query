@@ -1,4 +1,4 @@
-# mcp-postgres-typescript
+# mcp-postgres-query
 
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for PostgreSQL. The `postgres_query` tool lets MCP clients (e.g. Cursor) run **one** SQL statement per invocation.
 
@@ -20,7 +20,7 @@ Communication uses **stdio** (not HTTP). PostgreSQL credentials and options are 
   "mcpServers": {
     "postgres": {
       "command": "npx",
-      "args": ["-y", "@achmadya-dev/mcp-postgres-typescript"],
+      "args": ["-y", "@achmadya-dev/mcp-postgres-query"],
       "env": {
         "PGHOST": "127.0.0.1",
         "PGUSER": "postgres",
@@ -37,8 +37,8 @@ Adjust the `env` values to match your PostgreSQL server.
 ## Manual setup from a cloned repository
 
 ```bash
-git clone <repo-url> mcp-postgres-typescript
-cd mcp-postgres-typescript
+git clone <repo-url> mcp-postgres-query
+cd mcp-postgres-query
 pnpm install && pnpm run build
 ```
 
@@ -49,7 +49,7 @@ Register the MCP server with **`node`** and the **absolute path** to `dist/index
   "mcpServers": {
     "postgres": {
       "command": "node",
-      "args": ["C:/Users/Username/projects/mcp-postgres-typescript/dist/index.js"],
+      "args": ["C:/Users/Username/projects/mcp-postgres-query/dist/index.js"],
       "env": {
         "PGHOST": "127.0.0.1",
         "PGUSER": "postgres",

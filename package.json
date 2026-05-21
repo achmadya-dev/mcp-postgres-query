@@ -1,11 +1,16 @@
 {
-  "name": "@achmadya-dev/mcp-postgres-typescript",
+  "name": "@achmadya-dev/mcp-postgres-query",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "mcp-postgres-typescript": "./dist/index.js"
+    "mcp-postgres-query": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc",
