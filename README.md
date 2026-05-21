@@ -20,7 +20,7 @@ Communication uses **stdio** (not HTTP). PostgreSQL credentials and options are 
   "mcpServers": {
     "postgres": {
       "command": "npx",
-      "args": ["-y", "mcp-postgres-typescript"],
+      "args": ["-y", "@achmadya-dev/mcp-postgres-typescript"],
       "env": {
         "PGHOST": "127.0.0.1",
         "PGUSER": "postgres",

@@ -1,5 +1,5 @@
 {
-  "name": "mcp-postgres-typescript",
+  "name": "@achmadya-dev/mcp-postgres-typescript",
   "version": "0.1.0",
   "private": true,
   "type": "module",
