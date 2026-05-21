@@ -25,7 +25,6 @@ function envOptionalStr(name: string): string | undefined {
 
 let cached: PostgresConfig | null = null;
 
-/** Env ALLOW_* untuk tulis/DDL default `false` — hanya read (SELECT, EXPLAIN, …) kecuali diaktifkan eksplisit. */
 export function loadConfig(): PostgresConfig {
   if (cached) return cached;
   cached = {

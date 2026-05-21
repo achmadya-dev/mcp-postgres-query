@@ -25,23 +25,21 @@ export interface BannedPattern {
   reason: string;
 }
 
-/** Konstruk SQL yang dilarang oleh kebijakan server (selalu ditolak). */
 export const BANNED_PATTERNS: readonly BannedPattern[] = [
   {
     name: "cte",
     regex: /\bWITH\b/i,
     reason:
-      "Common Table Expression (WITH ...) tidak diizinkan. Tulis ulang kueri tanpa CTE.",
+      "Common Table Expression (WITH ...) is not allowed. Rewrite the query without a CTE.",
   },
   {
     name: "row_number",
     regex: /\bROW_NUMBER\s*\(/i,
     reason:
-      "Fungsi window ROW_NUMBER() tidak diizinkan. Gunakan pendekatan alternatif (mis. JOIN/agregasi).",
+      "Window function ROW_NUMBER() is not allowed. Use an alternative approach (e.g. JOIN/aggregation).",
   },
 ];
 
-/** Ambil keyword pertama dari SQL (huruf besar, tanpa quote). */
 export function firstKeyword(sql: string): string {
   const text = stripComments(sql).trim();
   if (!text) return "";

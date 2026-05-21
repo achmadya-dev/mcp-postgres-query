@@ -1,11 +1,11 @@
 {
-  "name": "mcp-postgres-ts",
+  "name": "mcp-postgres-typescript",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "mcp-postgres-ts": "./dist/index.js"
+    "mcp-postgres-typescript": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
