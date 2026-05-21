@@ -23,6 +23,7 @@ Communication uses **stdio** (not HTTP). PostgreSQL credentials and options are 
       "args": ["-y", "@achmadya-dev/mcp-postgres-query"],
       "env": {
         "POSTGRES_HOST": "127.0.0.1",
+        "POSTGRES_PORT": "5432",
         "POSTGRES_USER": "postgres",
         "POSTGRES_PASSWORD": "password",
         "POSTGRES_DATABASE": "mydb"
@@ -52,6 +53,7 @@ Register the MCP server with **`node`** and the **absolute path** to `dist/index
       "args": ["C:/Users/Username/projects/mcp-postgres-query/dist/index.js"],
       "env": {
         "POSTGRES_HOST": "127.0.0.1",
+        "POSTGRES_PORT": "5432",
         "POSTGRES_USER": "postgres",
         "POSTGRES_PASSWORD": "password",
         "POSTGRES_DATABASE": "mydb"
