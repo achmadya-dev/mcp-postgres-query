@@ -22,10 +22,10 @@ Communication uses **stdio** (not HTTP). PostgreSQL credentials and options are 
       "command": "npx",
       "args": ["-y", "@achmadya-dev/mcp-postgres-query"],
       "env": {
-        "PGHOST": "127.0.0.1",
-        "PGUSER": "postgres",
-        "PGPASSWORD": "password",
-        "PGDATABASE": "mydb"
+        "POSTGRES_HOST": "127.0.0.1",
+        "POSTGRES_USER": "postgres",
+        "POSTGRES_PASSWORD": "password",
+        "POSTGRES_DATABASE": "mydb"
       }
     }
   }
@@ -51,10 +51,10 @@ Register the MCP server with **`node`** and the **absolute path** to `dist/index
       "command": "node",
       "args": ["C:/Users/Username/projects/mcp-postgres-query/dist/index.js"],
       "env": {
-        "PGHOST": "127.0.0.1",
-        "PGUSER": "postgres",
-        "PGPASSWORD": "password",
-        "PGDATABASE": "mydb"
+        "POSTGRES_HOST": "127.0.0.1",
+        "POSTGRES_USER": "postgres",
+        "POSTGRES_PASSWORD": "password",
+        "POSTGRES_DATABASE": "mydb"
       }
     }
   }
@@ -65,33 +65,42 @@ Replace the path in `args` with your clone location. After changing TypeScript s
 
 ## Environment variables
 
-### Connection (libpq convention)
+### Connection
 
-| Variable     | Default                  | Description                                   |
-| ------------ | ------------------------ | --------------------------------------------- |
-| `PGHOST`     | `127.0.0.1`              | PostgreSQL host                               |
-| `PGPORT`     | `5432`                   | Port                                          |
-| `PGUSER`     | `postgres`               | Username                                      |
-| `PGPASSWORD` | _(unset = empty string)_ | Password                                      |
-| `PGDATABASE` | _(optional)_             | Database name                                 |
-| `PG_MAX_ROWS`| `500`                    | Max rows returned for row-returning queries   |
+| Variable              | Default                  | Description                                 |
+| --------------------- | ------------------------ | ------------------------------------------- |
+| `POSTGRES_HOST`       | `127.0.0.1`              | PostgreSQL host                             |
+| `POSTGRES_PORT`       | `5432`                   | Port                                        |
+| `POSTGRES_USER`       | `postgres`               | Username                                    |
+| `POSTGRES_PASSWORD`   | _(unset = empty string)_ | Password                                    |
+| `POSTGRES_DATABASE`   | _(optional)_             | Database name                               |
+| `POSTGRES_MAX_ROWS`   | `500`                    | Max rows returned for row-returning queries |
 
 ### Allowing write operations
 
-**Read** commands (`SELECT`, `WITH`, `EXPLAIN`, `TABLE`, `VALUES`, and similar read patterns) are always allowed.
+**Read** commands (`SELECT`, `EXPLAIN`, `TABLE`, `VALUES`, `SHOW`) are always allowed.
 
 To allow **writes** or **DDL**, enable the variables below. Values treated as enabled: `true`, `1`, `yes`, or `on` (case-insensitive).
 
-| Variable                 | Allows                             |
-| ------------------------ | ---------------------------------- |
-| `ALLOW_INSERT_OPERATION` | `INSERT`                           |
-| `ALLOW_UPDATE_OPERATION` | `UPDATE`                           |
-| `ALLOW_DELETE_OPERATION` | `DELETE`                           |
-| `ALLOW_DDL_OPERATION`    | DDL (`CREATE`, `ALTER`, `DROP`, etc.) |
+| Variable                 | Allows                                  |
+| ------------------------ | --------------------------------------- |
+| `ALLOW_INSERT_OPERATION` | `INSERT`                                |
+| `ALLOW_UPDATE_OPERATION` | `UPDATE`                                |
+| `ALLOW_DELETE_OPERATION` | `DELETE`                                |
+| `ALLOW_DDL_OPERATION`    | DDL (`CREATE`, `ALTER`, `DROP`, etc.)   |
 
 If a variable is unset or its value is not one of the above, that operation type is **rejected**.
+
+## Query restrictions
+
+Regardless of `ALLOW_*` settings, the following are **always rejected**:
+
+- **Common Table Expressions** — queries containing `WITH ...` (rewrite without a CTE).
+- **`ROW_NUMBER()`** — window function not allowed (use JOIN/aggregation instead).
 
 ## Other behavior
 
 - Each request must contain **one** SQL statement only (no multiple statements separated by `;`).
-- Row-returning query results are returned as columnar text; row count is capped by `PG_MAX_ROWS`.
+- Results are returned as **JSON** text in the tool response.
+- Row-returning queries include `columns`, `rows`, `rowCount`, `totalRows`, `truncated`, and `maxRows`; row count is capped by `POSTGRES_MAX_ROWS`.
+- Non-row commands (e.g. `INSERT`, `UPDATE`) return `kind: "execute"` with `affectedRows`.
