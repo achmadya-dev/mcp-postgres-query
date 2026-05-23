@@ -1,11 +1,28 @@
 #!/usr/bin/env node
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { createServer } from "./server/createServer.js";
+import { Server } from "./mcp/server.js";
+import packageJson from "../package.json" with { type: "json" };
+import {
+  postgres_select,
+  postgres_insert,
+  postgres_update,
+  postgres_delete,
+  postgres_ddl,
+} from "./mcp/registry.js";
+import config from "./mcp/postgres/config.js";
 
 async function main(): Promise<void> {
-  const server = createServer();
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
+  const server = new Server({
+    name: "PostgreSQL Database",
+    version: packageJson.version,
+  });
+
+  server.registerTool(postgres_select);
+  if (config.allowInsert) server.registerTool(postgres_insert);
+  if (config.allowUpdate) server.registerTool(postgres_update);
+  if (config.allowDelete) server.registerTool(postgres_delete);
+  if (config.allowDdl) server.registerTool(postgres_ddl);
+
+  await server.start();
 }
 
 main().catch((err) => {

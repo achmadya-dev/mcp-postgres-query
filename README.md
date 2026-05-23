@@ -93,13 +93,6 @@ To allow **writes** or **DDL**, enable the variables below. Values treated as en
 
 If a variable is unset or its value is not one of the above, that operation type is **rejected**.
 
-## Query restrictions
-
-Regardless of `ALLOW_*` settings, the following are **always rejected**:
-
-- **Common Table Expressions** — queries containing `WITH ...` (rewrite without a CTE).
-- **`ROW_NUMBER()`** — window function not allowed (use JOIN/aggregation instead).
-
 ## Other behavior
 
 - Each request must contain **one** SQL statement only (no multiple statements separated by `;`).
