@@ -8,72 +8,70 @@ import {
 
 export const postgres_select = defineTool({
   name: "postgres_select",
-  description: "Membaca data dari database menggunakan SELECT, EXPLAIN, TABLE, VALUES, atau SHOW. Hanya diizinkan satu kueri saja.",
+  description: "Read data from the database using SELECT, EXPLAIN, TABLE, VALUES, or SHOW. Only a single query is allowed.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: async ({ sql }) => {
     const query = safeQuery(sql, ["SELECT", "EXPLAIN", "TABLE", "VALUES", "SHOW"]);
     const result = await runSql(query);
     const parsed = postgresQueryResultSchema.safeParse(result);
-    if (!parsed.success) {
-      throw new ToolError(`Hasil kueri tidak valid: ${parsed.error.message}`);
-    }
+    if (!parsed.success) throw new ToolError(`Invalid query result: ${parsed.error.message}`);
     return parsed.data;
   },
 });
 
 export const postgres_insert = defineTool({
   name: "postgres_insert",
-  description: "Memasukkan data baru ke database menggunakan INSERT. Hanya diizinkan satu kueri saja.",
+  description: "Insert new data into the database using INSERT. Only a single query is allowed.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: async ({ sql }) => {
     const query = safeQuery(sql, ["INSERT"]);
     const result = await runSql(query);
     const parsed = postgresQueryResultSchema.safeParse(result);
-    if (!parsed.success) throw new ToolError(`Hasil kueri tidak valid: ${parsed.error.message}`);
+    if (!parsed.success) throw new ToolError(`Invalid query result: ${parsed.error.message}`);
     return parsed.data;
   },
 });
 
 export const postgres_update = defineTool({
   name: "postgres_update",
-  description: "Mengubah data yang ada di database menggunakan UPDATE. Hanya diizinkan satu kueri saja.",
+  description: "Update existing data in the database using UPDATE. Only a single query is allowed.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: async ({ sql }) => {
     const query = safeQuery(sql, ["UPDATE"]);
     const result = await runSql(query);
     const parsed = postgresQueryResultSchema.safeParse(result);
-    if (!parsed.success) throw new ToolError(`Hasil kueri tidak valid: ${parsed.error.message}`);
+    if (!parsed.success) throw new ToolError(`Invalid query result: ${parsed.error.message}`);
     return parsed.data;
   },
 });
 
 export const postgres_delete = defineTool({
   name: "postgres_delete",
-  description: "Menghapus data dari database menggunakan DELETE. Hanya diizinkan satu kueri saja.",
+  description: "Delete data from the database using DELETE. Only a single query is allowed.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: async ({ sql }) => {
     const query = safeQuery(sql, ["DELETE"]);
     const result = await runSql(query);
     const parsed = postgresQueryResultSchema.safeParse(result);
-    if (!parsed.success) throw new ToolError(`Hasil kueri tidak valid: ${parsed.error.message}`);
+    if (!parsed.success) throw new ToolError(`Invalid query result: ${parsed.error.message}`);
     return parsed.data;
   },
 });
 
 export const postgres_ddl = defineTool({
   name: "postgres_ddl",
-  description: "Mengubah skema database atau hak akses menggunakan CREATE, ALTER, DROP, TRUNCATE, RENAME, GRANT, REVOKE, atau COMMENT. Hanya diizinkan satu kueri saja.",
+  description: "Modify the database schema or permissions using CREATE, ALTER, DROP, TRUNCATE, RENAME, GRANT, REVOKE, or COMMENT. Only a single query is allowed.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: async ({ sql }) => {
     const query = safeQuery(sql, ["CREATE", "ALTER", "DROP", "TRUNCATE", "RENAME", "GRANT", "REVOKE", "COMMENT"]);
     const result = await runSql(query);
     const parsed = postgresQueryResultSchema.safeParse(result);
-    if (!parsed.success) throw new ToolError(`Hasil kueri tidak valid: ${parsed.error.message}`);
+    if (!parsed.success) throw new ToolError(`Invalid query result: ${parsed.error.message}`);
     return parsed.data;
   },
 });

@@ -4,7 +4,7 @@ import config from "./config.js";
 
 export function safeQuery(sql: string, allowedPrefixes: string[]): string {
   const clean = sql.trim();
-  if (!clean) throw new ToolError("Kueri SQL tidak boleh kosong.");
+  if (!clean) throw new ToolError("SQL query cannot be empty.");
 
   const upper = clean.toUpperCase();
   const hasPrefix = allowedPrefixes.some(prefix => {
@@ -13,7 +13,7 @@ export function safeQuery(sql: string, allowedPrefixes: string[]): string {
     const nextChar = upper.charAt(prefix.length);
     return /\s/.test(nextChar);
   });
-  if (!hasPrefix) throw new ToolError(`Kueri SQL tidak diizinkan untuk perkakas ini. Harus dimulai dengan salah satu dari: ${allowedPrefixes.join(", ")}`);
+  if (!hasPrefix) throw new ToolError(`SQL query is not allowed for this tool. It must start with one of: ${allowedPrefixes.join(", ")}`);
 
   const parts: string[] = [];
   let current = "";
@@ -50,7 +50,7 @@ export function safeQuery(sql: string, allowedPrefixes: string[]): string {
   if (current.length > 0) parts.push(current);
 
   const nonEmptyParts = parts.map(p => p.trim()).filter(p => p.length > 0);
-  if (nonEmptyParts.length > 1) throw new ToolError("Hanya satu kueri SQL yang diperbolehkan per panggilan (tidak boleh ada beberapa kueri dipisahkan dengan ';').");
+  if (nonEmptyParts.length > 1) throw new ToolError("Only a single SQL query is allowed per call (multiple queries separated by ';' are not allowed).");
 
   return clean;
 }

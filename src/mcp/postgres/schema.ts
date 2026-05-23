@@ -1,18 +1,16 @@
 import { z } from "zod";
 
-const rowValue = z.any();
-
 export const postgresQueryInputSchema = {
   sql: z
     .string()
     .refine((val) => val.trim().length > 0, {
-      message: "SQL tidak boleh kosong",
+      message: "SQL cannot be empty",
     })
     .refine((val) => val.length <= 100000, {
-      message: "SQL terlalu panjang (maks. 100.000 karakter)",
+      message: "SQL is too long (max 100,000 characters)",
     })
     .describe(
-      "Satu pernyataan SQL. Tidak boleh beberapa pernyataan dipisah ';'."
+      "A single SQL statement. Multiple statements separated by ';' are not allowed."
     ),
 } as const;
 
@@ -23,7 +21,7 @@ export const postgresQueryOutputShape = {
   totalRows: z.number().int().nonnegative().optional(),
   truncated: z.boolean().optional(),
   maxRows: z.number().int().positive().optional(),
-  rows: z.array(z.record(z.string(), rowValue)).optional(),
+  rows: z.array(z.record(z.string(), z.any())).optional(),
   affectedRows: z.number().int().nonnegative().optional(),
 } as const;
 
@@ -35,7 +33,7 @@ export const postgresQueryResultSchema = z.discriminatedUnion("kind", [
     totalRows: z.number().int().nonnegative(),
     truncated: z.boolean(),
     maxRows: z.number().int().positive(),
-    rows: z.array(z.record(z.string(), rowValue)),
+    rows: z.array(z.record(z.string(), z.any())),
   }),
   z.object({
     kind: z.literal("execute"),
