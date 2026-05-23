@@ -21,7 +21,7 @@ function envStr(name: string, defaultVal = ""): string {
 export default {
   host: envStr("POSTGRES_HOST", "127.0.0.1"),
   port: envInt("POSTGRES_PORT", 5432),
-  user: envStr("POSTGRES_USER", "postgres"),
+  user: envStr("POSTGRES_USER"),
   password: envStr("POSTGRES_PASSWORD", ""),
   database: envStr("POSTGRES_DATABASE") || undefined,
   maxRows: envInt("POSTGRES_MAX_ROWS", 500),

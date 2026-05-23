@@ -73,7 +73,7 @@ Replace the path in `args` with your clone location. After changing TypeScript s
 | --------------------- | ------------------------ | ------------------------------------------- |
 | `POSTGRES_HOST`       | `127.0.0.1`              | PostgreSQL host                             |
 | `POSTGRES_PORT`       | `5432`                   | Port                                        |
-| `POSTGRES_USER`       | `postgres`               | Username                                    |
+| `POSTGRES_USER`       | _(unset = empty string)_ | Username                                    |
 | `POSTGRES_PASSWORD`   | _(unset = empty string)_ | Password                                    |
 | `POSTGRES_DATABASE`   | _(optional)_             | Database name                               |
 | `POSTGRES_MAX_ROWS`   | `500`                    | Max rows returned for row-returning queries |
