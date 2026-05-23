@@ -1,58 +1,13 @@
 import pg from "pg";
 import { ToolError } from "../server.js";
 import config from "./config.js";
+import * as helpers from "./helpers.js";
 
 export function safeQuery(sql: string, allowedPrefixes: string[]): string {
-  const clean = sql.trim();
-  if (!clean) throw new ToolError("SQL query cannot be empty.");
-
-  const upper = clean.toUpperCase();
-  const hasPrefix = allowedPrefixes.some(prefix => {
-    if (!upper.startsWith(prefix)) return false;
-    if (upper.length === prefix.length) return true;
-    const nextChar = upper.charAt(prefix.length);
-    return /\s/.test(nextChar);
-  });
-  if (!hasPrefix) throw new ToolError(`SQL query is not allowed for this tool. It must start with one of: ${allowedPrefixes.join(", ")}`);
-
-  const parts: string[] = [];
-  let current = "";
-  let inSingleQuote = false;
-  let inDoubleQuote = false;
-  let inBacktick = false;
-  let escape = false;
-
-  for (let i = 0; i < clean.length; i++) {
-    const char = clean.charAt(i);
-    if (escape) {
-      current += char;
-      escape = false;
-      continue;
-    }
-
-    if (char === "\\") {
-      current += char;
-      escape = true;
-      continue;
-    }
-
-    if (char === "'" && !inDoubleQuote && !inBacktick) inSingleQuote = !inSingleQuote;
-    if (char === '"' && !inSingleQuote && !inBacktick) inDoubleQuote = !inDoubleQuote;
-    if (char === "`" && !inSingleQuote && !inDoubleQuote) inBacktick = !inBacktick;
-
-    if (char === ";" && !inSingleQuote && !inDoubleQuote && !inBacktick) {
-      parts.push(current);
-      current = "";
-    } else {
-      current += char;
-    }
-  }
-  if (current.length > 0) parts.push(current);
-
-  const nonEmptyParts = parts.map(p => p.trim()).filter(p => p.length > 0);
-  if (nonEmptyParts.length > 1) throw new ToolError("Only a single SQL query is allowed per call (multiple queries separated by ';' are not allowed).");
-
-  return clean;
+  const { cleanSql, prefixes } = helpers.validateInputs(sql, allowedPrefixes);
+  const statement = helpers.parseSingleStatement(cleanSql);
+  helpers.validateStatement(statement, prefixes);
+  return statement;
 }
 
 export async function runSql(sql: string): Promise<{
