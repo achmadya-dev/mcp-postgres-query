@@ -1,7 +1,7 @@
 {
   "name": "@achmadya-dev/mcp-postgres-query",
   "version": "0.1.0",
-  "description": "Model Context Protocol (MCP) server for PostgreSQL — a minimal and highly readable codebase to run SQL queries via stdio (read-only by default)",
+  "description": "Model Context Protocol (MCP) server for PostgreSQL to run SQL queries via stdio (read-only by default)",
   "type": "module",
   "author": "achmadya",
   "license": "MIT",
@@ -28,7 +28,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node dist/index.js",
     "prepublishOnly": "pnpm run build"
   },
@@ -36,13 +37,17 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.12.0",
+    "@modelcontextprotocol/sdk": "1.29.0",
     "pg": "8.13.1",
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@jest/globals": "30.4.1",
+    "@types/jest": "30.0.0",
     "@types/node": "22.10.0",
     "@types/pg": "8.11.10",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.11",
     "typescript": "5.7.2"
   }
 }

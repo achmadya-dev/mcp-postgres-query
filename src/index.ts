@@ -8,7 +8,6 @@ import {
   postgres_delete,
   postgres_ddl,
 } from "./mcp/registry.js";
-import config from "./mcp/postgres/config.js";
 
 async function main(): Promise<void> {
   const server = new Server({
@@ -17,10 +16,10 @@ async function main(): Promise<void> {
   });
 
   server.registerTool(postgres_select);
-  if (config.allowInsert) server.registerTool(postgres_insert);
-  if (config.allowUpdate) server.registerTool(postgres_update);
-  if (config.allowDelete) server.registerTool(postgres_delete);
-  if (config.allowDdl) server.registerTool(postgres_ddl);
+  server.registerTool(postgres_insert);
+  server.registerTool(postgres_update);
+  server.registerTool(postgres_delete);
+  server.registerTool(postgres_ddl);
 
   await server.start();
 }
