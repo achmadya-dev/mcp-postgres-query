@@ -75,7 +75,7 @@ Replace the path in `args` with your clone location. After changing TypeScript s
 | `POSTGRES_PORT`       | `5432`                   | Port                                        |
 | `POSTGRES_USER`       | _(unset = empty string)_ | Username                                    |
 | `POSTGRES_PASSWORD`   | _(unset = empty string)_ | Password                                    |
-| `POSTGRES_DATABASE`   | _(optional)_             | Database name                               |
+| `POSTGRES_DATABASE`   | _(optional)_             | Locks the server to this database when set    |
 | `POSTGRES_MAX_ROWS`   | `500`                    | Max rows returned for row-returning queries |
 
 ### Allowing write operations
@@ -92,6 +92,28 @@ To allow **writes** or **DDL**, enable the variables below. Values treated as en
 | `ALLOW_DDL_OPERATION`    | DDL (`CREATE`, `ALTER`, `DROP`, etc.)   |
 
 If a variable is unset or its value is not one of the above, that operation type is **rejected**.
+
+## Tool parameters
+
+Every tool accepts:
+
+| Parameter   | Required | Description |
+| ----------- | -------- | ----------- |
+| `sql`       | yes      | A single SQL statement |
+| `database`  | depends  | Required when `POSTGRES_DATABASE` is **not** set. Ignored when `POSTGRES_DATABASE` **is** set (server locked to that database). |
+
+**When `POSTGRES_DATABASE` is set** (e.g. `riset`): all queries use that database only. Use `schema.table` in `sql` for other schemas within the same database.
+
+**When `POSTGRES_DATABASE` is not set**: pass `database` on each query to choose the target database.
+
+Example without `POSTGRES_DATABASE` in server config:
+
+```json
+{
+  "sql": "SELECT datname FROM pg_database",
+  "database": "postgres"
+}
+```
 
 ## Other behavior
 

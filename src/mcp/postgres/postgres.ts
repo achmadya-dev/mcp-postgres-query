@@ -10,7 +10,10 @@ export function safeQuery(sql: string, allowedPrefixes: string[]): string {
   return statement;
 }
 
-export async function runSql(sql: string): Promise<{
+export async function runSql(
+  sql: string,
+  options?: { database?: string }
+): Promise<{
   kind: "resultset";
   columns: string[];
   rowCount: number;
@@ -23,12 +26,17 @@ export async function runSql(sql: string): Promise<{
   kind: "execute";
   affectedRows: number;
 }> {
+  const database = helpers.resolveDatabase(
+    config.database,
+    options?.database
+  );
+
   const client = new pg.Client({
     host: config.host,
     port: config.port,
     user: config.user,
     password: config.password,
-    database: config.database,
+    database,
   });
 
   try {

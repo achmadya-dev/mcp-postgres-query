@@ -12,6 +12,12 @@ export const postgresQueryInputSchema = {
     .describe(
       "A single SQL statement. Multiple statements separated by ';' are not allowed."
     ),
+  database: z
+    .string()
+    .optional()
+    .describe(
+      "Database name for this query. Required when POSTGRES_DATABASE is not set in server config. Ignored when POSTGRES_DATABASE is set (server is locked to that database). Schemas within a database are accessed via schema.table in SQL."
+    ),
 } as const;
 
 export const postgresQueryOutputShape = {
