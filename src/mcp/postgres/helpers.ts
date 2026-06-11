@@ -23,32 +23,23 @@ export function validateDatabaseName(name: string): string {
 
 /**
  * Resolve which database to connect to.
- * When POSTGRES_DATABASE is set, queries are locked to that database only.
- * When unset, the per-request database parameter is required.
+ * The per-request database parameter overrides POSTGRES_DATABASE when provided.
  */
 export function resolveDatabase(
   configured: string | undefined,
   requested: string | undefined
 ): string {
+  if (requested !== undefined) {
+    return validateDatabaseName(requested);
+  }
+
   if (configured !== undefined) {
-    if (requested !== undefined) {
-      const name = validateDatabaseName(requested);
-      if (name !== configured) {
-        throw new ToolError(
-          `Database "${name}" is not allowed. This server is locked to POSTGRES_DATABASE="${configured}".`
-        );
-      }
-    }
     return configured;
   }
 
-  if (requested === undefined) {
-    throw new ToolError(
-      "No database specified. Set POSTGRES_DATABASE in server config or pass the database parameter."
-    );
-  }
-
-  return validateDatabaseName(requested);
+  throw new ToolError(
+    "No database specified. Set POSTGRES_DATABASE in server config or pass the database parameter."
+  );
 }
 
 /**

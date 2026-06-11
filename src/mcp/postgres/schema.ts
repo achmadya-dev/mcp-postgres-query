@@ -16,7 +16,7 @@ export const postgresQueryInputSchema = {
     .string()
     .optional()
     .describe(
-      "Database name for this query. Required when POSTGRES_DATABASE is not set in server config. Ignored when POSTGRES_DATABASE is set (server is locked to that database). Schemas within a database are accessed via schema.table in SQL."
+      "Optional database name for this query. Overrides POSTGRES_DATABASE from server config. Schemas within a database are accessed via schema.table in SQL."
     ),
 } as const;
 

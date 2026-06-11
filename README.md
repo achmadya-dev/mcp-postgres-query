@@ -75,7 +75,7 @@ Replace the path in `args` with your clone location. After changing TypeScript s
 | `POSTGRES_PORT`       | `5432`                   | Port                                        |
 | `POSTGRES_USER`       | _(unset = empty string)_ | Username                                    |
 | `POSTGRES_PASSWORD`   | _(unset = empty string)_ | Password                                    |
-| `POSTGRES_DATABASE`   | _(optional)_             | Locks the server to this database when set    |
+| `POSTGRES_DATABASE`   | _(optional)_             | Default database when `database` is not passed |
 | `POSTGRES_MAX_ROWS`   | `500`                    | Max rows returned for row-returning queries |
 
 ### Allowing write operations
@@ -100,13 +100,11 @@ Every tool accepts:
 | Parameter   | Required | Description |
 | ----------- | -------- | ----------- |
 | `sql`       | yes      | A single SQL statement |
-| `database`  | depends  | Required when `POSTGRES_DATABASE` is **not** set. Ignored when `POSTGRES_DATABASE` **is** set (server locked to that database). |
+| `database`  | no       | Overrides `POSTGRES_DATABASE` for this query. Required when `POSTGRES_DATABASE` is not set. |
 
-**When `POSTGRES_DATABASE` is set** (e.g. `riset`): all queries use that database only. Use `schema.table` in `sql` for other schemas within the same database.
+Use `schema.table` in `sql` for other schemas within the same database.
 
-**When `POSTGRES_DATABASE` is not set**: pass `database` on each query to choose the target database.
-
-Example without `POSTGRES_DATABASE` in server config:
+Example overriding the default database:
 
 ```json
 {

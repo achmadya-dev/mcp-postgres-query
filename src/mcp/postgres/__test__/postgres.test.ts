@@ -8,18 +8,15 @@ describe("resolveDatabase", () => {
     ({ resolveDatabase } = await import("../helpers.js"));
   });
 
-  it("locks to POSTGRES_DATABASE when it is configured", () => {
+  it("uses POSTGRES_DATABASE as the default when configured", () => {
     expect(resolveDatabase("riset", undefined)).toBe("riset");
-    expect(resolveDatabase("riset", "riset")).toBe("riset");
   });
 
-  it("rejects a different database when POSTGRES_DATABASE is configured", () => {
-    expect(() => resolveDatabase("riset", "postgres")).toThrow(
-      /locked to POSTGRES_DATABASE="riset"/
-    );
+  it("overrides POSTGRES_DATABASE when database parameter is provided", () => {
+    expect(resolveDatabase("riset", "postgres")).toBe("postgres");
   });
 
-  it("requires database parameter when POSTGRES_DATABASE is not configured", () => {
+  it("requires a database when neither config nor parameter is set", () => {
     expect(() => resolveDatabase(undefined, undefined)).toThrow(
       /No database specified/
     );
@@ -249,25 +246,17 @@ describe("runSql", () => {
     );
   });
 
-  it("rejects switching databases when POSTGRES_DATABASE is configured", async () => {
-    await jest.unstable_mockModule("../config.js", () => ({
-      default: {
-        host: "127.0.0.1",
-        port: 5432,
-        user: "",
-        password: "",
-        database: "riset",
-        maxRows: 2,
-        allowInsert: false,
-        allowUpdate: false,
-        allowDelete: false,
-        allowDdl: false,
-      },
-    }));
+  it("overrides POSTGRES_DATABASE when database parameter is provided", async () => {
+    mockQuery.mockResolvedValue({
+      fields: [{ name: "ok" }],
+      rows: [{ ok: 1 }],
+    });
 
     const { runSql } = await import("../postgres.js");
-    await expect(runSql("SELECT 1", { database: "postgres" })).rejects.toThrow(
-      /locked to POSTGRES_DATABASE="riset"/
+    await runSql("SELECT 1", { database: "postgres" });
+
+    expect(mockClient).toHaveBeenCalledWith(
+      expect.objectContaining({ database: "postgres" })
     );
   });
 });

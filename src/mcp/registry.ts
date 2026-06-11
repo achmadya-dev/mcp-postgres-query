@@ -30,7 +30,7 @@ async function executeQuery(
 export const postgres_select = defineTool({
   name: "postgres_select",
   description:
-    "Read data from the database using SELECT, EXPLAIN, TABLE, VALUES, or SHOW. Only a single query is allowed. Pass database when POSTGRES_DATABASE is not configured; otherwise the server is locked to that database. Use schema.table in SQL for other schemas within the same database.",
+    "Read data from the database using SELECT, EXPLAIN, TABLE, VALUES, or SHOW. Only a single query is allowed. Optionally pass database to override POSTGRES_DATABASE. Use schema.table in SQL for other schemas within the same database.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: (input) =>
@@ -40,7 +40,7 @@ export const postgres_select = defineTool({
 export const postgres_insert = defineTool({
   name: "postgres_insert",
   description:
-    "Insert new data into the database using INSERT. Only a single query is allowed. Pass database when POSTGRES_DATABASE is not configured. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
+    "Insert new data into the database using INSERT. Only a single query is allowed. Optionally pass database to override POSTGRES_DATABASE. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: (input) =>
@@ -54,7 +54,7 @@ export const postgres_insert = defineTool({
 export const postgres_update = defineTool({
   name: "postgres_update",
   description:
-    "Update existing data in the database using UPDATE. Only a single query is allowed. Pass database when POSTGRES_DATABASE is not configured. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
+    "Update existing data in the database using UPDATE. Only a single query is allowed. Optionally pass database to override POSTGRES_DATABASE. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: (input) =>
@@ -68,7 +68,7 @@ export const postgres_update = defineTool({
 export const postgres_delete = defineTool({
   name: "postgres_delete",
   description:
-    "Delete data from the database using DELETE. Only a single query is allowed. Pass database when POSTGRES_DATABASE is not configured. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
+    "Delete data from the database using DELETE. Only a single query is allowed. Optionally pass database to override POSTGRES_DATABASE. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: (input) =>
@@ -82,7 +82,7 @@ export const postgres_delete = defineTool({
 export const postgres_ddl = defineTool({
   name: "postgres_ddl",
   description:
-    "Modify the database schema or permissions using CREATE, ALTER, DROP, TRUNCATE, RENAME, GRANT, REVOKE, or COMMENT. Only a single query is allowed. Pass database when POSTGRES_DATABASE is not configured. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
+    "Modify the database schema or permissions using CREATE, ALTER, DROP, TRUNCATE, RENAME, GRANT, REVOKE, or COMMENT. Only a single query is allowed. Optionally pass database to override POSTGRES_DATABASE. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
   inputSchema: postgresQueryInputSchema,
   outputSchema: postgresQueryOutputShape,
   handler: (input) =>
