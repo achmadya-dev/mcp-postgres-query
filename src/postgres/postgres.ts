@@ -1,5 +1,5 @@
 import pg from "pg";
-import { ToolError } from "../server.js";
+import { ToolError } from "@achmadya-dev/mcp-core";
 import config from "./config.js";
 import * as helpers from "./helpers.js";
 
@@ -13,23 +13,22 @@ export function safeQuery(sql: string, allowedPrefixes: string[]): string {
 export async function runSql(
   sql: string,
   options?: { database?: string }
-): Promise<{
-  kind: "resultset";
-  columns: string[];
-  rowCount: number;
-  totalRows: number;
-  truncated: boolean;
-  maxRows: number;
-  rows: Record<string, any>[];
-}
-| {
-  kind: "execute";
-  affectedRows: number;
-}> {
-  const database = helpers.resolveDatabase(
-    config.database,
-    options?.database
-  );
+): Promise<
+  | {
+      kind: "resultset";
+      columns: string[];
+      rowCount: number;
+      totalRows: number;
+      truncated: boolean;
+      maxRows: number;
+      rows: Record<string, any>[];
+    }
+  | {
+      kind: "execute";
+      affectedRows: number;
+    }
+> {
+  const database = helpers.resolveDatabase(config.database, options?.database);
 
   const client = new pg.Client({
     host: config.host,
@@ -67,9 +66,7 @@ export async function runSql(
       affectedRows: result.rowCount ?? 0,
     };
   } catch (e) {
-    throw new ToolError(
-      `PostgreSQL: ${e instanceof Error ? e.message : String(e)}`
-    );
+    throw new ToolError(`PostgreSQL: ${e instanceof Error ? e.message : String(e)}`);
   } finally {
     await client.end();
   }

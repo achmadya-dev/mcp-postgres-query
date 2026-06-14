@@ -17,9 +17,7 @@ describe("resolveDatabase", () => {
   });
 
   it("requires a database when neither config nor parameter is set", () => {
-    expect(() => resolveDatabase(undefined, undefined)).toThrow(
-      /No database specified/
-    );
+    expect(() => resolveDatabase(undefined, undefined)).toThrow(/No database specified/);
     expect(resolveDatabase(undefined, "postgres")).toBe("postgres");
   });
 });
@@ -56,9 +54,7 @@ describe("safeQuery", () => {
   });
 
   it("rejects queries with non-matching prefixes", () => {
-    expect(() => safeQuery("INSERT INTO users", ["SELECT"])).toThrow(
-      /SQL query is not allowed/
-    );
+    expect(() => safeQuery("INSERT INTO users", ["SELECT"])).toThrow(/SQL query is not allowed/);
   });
 
   it("allows a trailing semicolon on a single query", () => {
@@ -241,9 +237,7 @@ describe("runSql", () => {
     const { runSql } = await import("../postgres.js");
     await runSql("SELECT 1", { database: "other_db" });
 
-    expect(mockClient).toHaveBeenCalledWith(
-      expect.objectContaining({ database: "other_db" })
-    );
+    expect(mockClient).toHaveBeenCalledWith(expect.objectContaining({ database: "other_db" }));
   });
 
   it("overrides POSTGRES_DATABASE when database parameter is provided", async () => {
@@ -255,8 +249,6 @@ describe("runSql", () => {
     const { runSql } = await import("../postgres.js");
     await runSql("SELECT 1", { database: "postgres" });
 
-    expect(mockClient).toHaveBeenCalledWith(
-      expect.objectContaining({ database: "postgres" })
-    );
+    expect(mockClient).toHaveBeenCalledWith(expect.objectContaining({ database: "postgres" }));
   });
 });

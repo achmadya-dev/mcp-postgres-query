@@ -1,19 +1,13 @@
-# mcp-postgres-query
+# @achmadya-dev/mcp-postgres-query
 
-Model Context Protocol (MCP) server for PostgreSQL to run SQL queries via stdio (read-only by default). It lets MCP clients run a single SQL statement per invocation.
-
-**Default mode: read-only.** Commands such as `INSERT`, `UPDATE`, `DELETE`, and DDL are not executed unless you enable the corresponding environment variables (see below).
+MCP server for PostgreSQL. Runs a single SQL statement per tool call over **stdio**. **Read-only by default** — writes and DDL require explicit env flags.
 
 ## Requirements
 
 - Node.js **≥ 20**
+- A reachable PostgreSQL server
 
-Communication uses **stdio** (not HTTP). PostgreSQL credentials and options are set via environment variables in your MCP configuration (`env`) or on the system.
-
-## Install in MCP Clients (e.g. Cursor)
-
-1. Open **Settings → MCP**, or edit the `mcp.json` file for your Cursor account.
-2. Add a server entry like the example below.
+## Install from npm
 
 ```json
 {
@@ -22,89 +16,94 @@ Communication uses **stdio** (not HTTP). PostgreSQL credentials and options are 
       "command": "npx",
       "args": ["-y", "@achmadya-dev/mcp-postgres-query"],
       "env": {
-        "POSTGRES_HOST": "127.0.0.1",
+        "POSTGRES_HOST": "localhost",
         "POSTGRES_PORT": "5432",
-        "POSTGRES_USER": "postgres",
-        "POSTGRES_PASSWORD": "password",
-        "POSTGRES_DATABASE": "mydb"
+        "POSTGRES_USER": "your_user",
+        "POSTGRES_PASSWORD": "your_password",
+        "POSTGRES_DATABASE": "your_database"
       }
     }
   }
 }
 ```
 
-Adjust the `env` values to match your PostgreSQL server.
+Or use `envFile` instead of inline `env` (see [Cursor MCP docs](https://cursor.com/docs/mcp)).
 
-## Manual setup from a cloned repository
+## Develop from source
 
 ```bash
-git clone <repo-url> mcp-postgres-query
-cd mcp-postgres-query
-pnpm install && pnpm run build
+cp .env.example .env
+pnpm install
+docker compose up -d postgres
+pnpm --filter @achmadya-dev/mcp-postgres-query run build
 ```
 
-Register the MCP server with **`node`** and the **absolute path** to `dist/index.js`:
+`.cursor/mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "postgres": {
       "command": "node",
-      "args": ["C:/Users/Username/projects/mcp-postgres-query/dist/index.js"],
-      "env": {
-        "POSTGRES_HOST": "127.0.0.1",
-        "POSTGRES_PORT": "5432",
-        "POSTGRES_USER": "postgres",
-        "POSTGRES_PASSWORD": "password",
-        "POSTGRES_DATABASE": "mydb"
-      }
+      "args": ["${workspaceFolder}/packages/mcp-postgres-query/dist/index.js"],
+      "envFile": "${workspaceFolder}/.env"
     }
   }
 }
 ```
 
-Replace the path in `args` with your clone location. After changing TypeScript sources, run `pnpm run build` again.
+Relevant `.env` keys:
+
+```env
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=dev
+POSTGRES_PASSWORD=devpassword
+POSTGRES_DATABASE=devdb
+```
 
 ## Environment variables
 
 ### Connection
 
-| Variable              | Default                  | Description                                 |
-| --------------------- | ------------------------ | ------------------------------------------- |
-| `POSTGRES_HOST`       | `127.0.0.1`              | PostgreSQL host                             |
-| `POSTGRES_PORT`       | `5432`                   | Port                                        |
-| `POSTGRES_USER`       | _(unset = empty string)_ | Username                                    |
-| `POSTGRES_PASSWORD`   | _(unset = empty string)_ | Password                                    |
-| `POSTGRES_DATABASE`   | _(optional)_             | Default database when `database` is not passed |
-| `POSTGRES_MAX_ROWS`   | `500`                    | Max rows returned for row-returning queries |
+| Variable            | Default      | Description                        |
+| ------------------- | ------------ | ---------------------------------- |
+| `POSTGRES_HOST`     | `localhost`  | PostgreSQL host                    |
+| `POSTGRES_PORT`     | `5432`       | Port                               |
+| `POSTGRES_USER`     | _(empty)_    | Username                           |
+| `POSTGRES_PASSWORD` | _(empty)_    | Password                           |
+| `POSTGRES_DATABASE` | _(optional)_ | Default database                   |
+| `POSTGRES_MAX_ROWS` | `500`        | Max rows for row-returning queries |
 
-### Allowing write operations
+### Write access
 
-**Read** commands (`SELECT`, `EXPLAIN`, `TABLE`, `VALUES`, `SHOW`) are always allowed.
+| Variable                 | Allows   |
+| ------------------------ | -------- |
+| `ALLOW_INSERT_OPERATION` | `INSERT` |
+| `ALLOW_UPDATE_OPERATION` | `UPDATE` |
+| `ALLOW_DELETE_OPERATION` | `DELETE` |
+| `ALLOW_DDL_OPERATION`    | DDL      |
 
-To allow **writes** or **DDL**, enable the variables below. Values treated as enabled: `true`, `1`, `yes`, or `on` (case-insensitive).
+Enabled values: `true`, `1`, `yes`, `on`.
 
-| Variable                 | Allows                                  |
-| ------------------------ | --------------------------------------- |
-| `ALLOW_INSERT_OPERATION` | `INSERT`                                |
-| `ALLOW_UPDATE_OPERATION` | `UPDATE`                                |
-| `ALLOW_DELETE_OPERATION` | `DELETE`                                |
-| `ALLOW_DDL_OPERATION`    | DDL (`CREATE`, `ALTER`, `DROP`, etc.)   |
+## Tools
 
-If a variable is unset or its value is not one of the above, that operation type is **rejected**.
+| Tool              | Statements                                     | Env flag                 |
+| ----------------- | ---------------------------------------------- | ------------------------ |
+| `postgres_select` | `SELECT`, `EXPLAIN`, `TABLE`, `VALUES`, `SHOW` | always on                |
+| `postgres_insert` | `INSERT`                                       | `ALLOW_INSERT_OPERATION` |
+| `postgres_update` | `UPDATE`                                       | `ALLOW_UPDATE_OPERATION` |
+| `postgres_delete` | `DELETE`                                       | `ALLOW_DELETE_OPERATION` |
+| `postgres_ddl`    | DDL                                            | `ALLOW_DDL_OPERATION`    |
 
-## Tool parameters
+### Tool input
 
-Every tool accepts:
+| Parameter  | Required | Description                                 |
+| ---------- | -------- | ------------------------------------------- |
+| `sql`      | yes      | Single SQL statement                        |
+| `database` | no       | Overrides `POSTGRES_DATABASE` for this call |
 
-| Parameter   | Required | Description |
-| ----------- | -------- | ----------- |
-| `sql`       | yes      | A single SQL statement |
-| `database`  | no       | Overrides `POSTGRES_DATABASE` for this query. Required when `POSTGRES_DATABASE` is not set. |
-
-Use `schema.table` in `sql` for other schemas within the same database.
-
-Example overriding the default database:
+Example:
 
 ```json
 {
@@ -113,9 +112,18 @@ Example overriding the default database:
 }
 ```
 
-## Other behavior
+Use `schema.table` in `sql` for other schemas in the same database.
 
-- Each request must contain **one** SQL statement only (no multiple statements separated by `;`).
-- Results are returned as **JSON** text in the tool response.
-- Row-returning queries include `columns`, `rows`, `rowCount`, `totalRows`, `truncated`, and `maxRows`; row count is capped by `POSTGRES_MAX_ROWS`.
-- Non-row commands (e.g. `INSERT`, `UPDATE`) return `kind: "execute"` with `affectedRows`.
+## Behavior and security
+
+- One statement per request.
+- Results are JSON text with `columns`, `rows`, `rowCount`, `truncated`, `maxRows` for row-returning queries.
+- Execute results return `kind: "execute"` with `affectedRows`.
+
+## Package scripts
+
+```bash
+pnpm run build
+pnpm test
+pnpm start
+```

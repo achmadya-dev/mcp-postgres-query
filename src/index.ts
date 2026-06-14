@@ -1,30 +1,14 @@
 #!/usr/bin/env node
-import { Server } from "./mcp/server.js";
+import { startMcpServer } from "@achmadya-dev/mcp-core";
 import packageJson from "../package.json" with { type: "json" };
-import {
-  postgres_select,
-  postgres_insert,
-  postgres_update,
-  postgres_delete,
-  postgres_ddl,
-} from "./mcp/registry.js";
+import { postgres_ddl } from "./tools/postgres_ddl.js";
+import { postgres_delete } from "./tools/postgres_delete.js";
+import { postgres_insert } from "./tools/postgres_insert.js";
+import { postgres_select } from "./tools/postgres_select.js";
+import { postgres_update } from "./tools/postgres_update.js";
 
-async function main(): Promise<void> {
-  const server = new Server({
-    name: "PostgreSQL Database",
-    version: packageJson.version,
-  });
-
-  server.registerTool(postgres_select);
-  server.registerTool(postgres_insert);
-  server.registerTool(postgres_update);
-  server.registerTool(postgres_delete);
-  server.registerTool(postgres_ddl);
-
-  await server.start();
-}
-
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
+await startMcpServer({
+  name: "PostgreSQL Database",
+  version: packageJson.version,
+  tools: [postgres_select, postgres_insert, postgres_update, postgres_delete, postgres_ddl],
 });
