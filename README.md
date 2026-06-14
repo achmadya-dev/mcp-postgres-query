@@ -32,34 +32,31 @@ Or use `envFile` instead of inline `env` (see [Cursor MCP docs](https://cursor.c
 ## Develop from source
 
 ```bash
-cp .env.example .env
+git clone https://github.com/achmadya-dev/mcp-postgres-query.git
+cd mcp-postgres-query
 pnpm install
-docker compose up -d postgres
-pnpm --filter @achmadya-dev/mcp-postgres-query run build
+pnpm run build
+pnpm test
 ```
 
-`.cursor/mcp.json`:
+Open the repo root in Cursor. You need a reachable PostgreSQL instance — set connection env in `.cursor/mcp.json` or via `envFile`:
 
 ```json
 {
   "mcpServers": {
     "postgres": {
       "command": "node",
-      "args": ["${workspaceFolder}/packages/mcp-postgres-query/dist/index.js"],
-      "envFile": "${workspaceFolder}/.env"
+      "args": ["${workspaceFolder}/dist/index.js"],
+      "env": {
+        "POSTGRES_HOST": "localhost",
+        "POSTGRES_PORT": "5432",
+        "POSTGRES_USER": "your_user",
+        "POSTGRES_PASSWORD": "your_password",
+        "POSTGRES_DATABASE": "your_database"
+      }
     }
   }
 }
-```
-
-Relevant `.env` keys:
-
-```env
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_USER=dev
-POSTGRES_PASSWORD=devpassword
-POSTGRES_DATABASE=devdb
 ```
 
 ## Environment variables
