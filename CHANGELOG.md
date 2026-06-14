@@ -1,0 +1,7 @@
+# @achmadya-dev/mcp-postgres-query
+
+## 0.2.0
+
+### Minor Changes
+
+- 49d960f: Sync standalone repo with monorepo: mcp-core 0.3.x, Zod schemas, Changesets CI/publish.
