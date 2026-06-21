@@ -1,6 +1,6 @@
 {
   "name": "@achmadya-dev/mcp-postgres-query",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Model Context Protocol (MCP) server for PostgreSQL to run SQL queries via stdio (read-only by default)",
   "type": "module",
   "author": "achmadya",
