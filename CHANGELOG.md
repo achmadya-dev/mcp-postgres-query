@@ -1,5 +1,11 @@
 # @achmadya-dev/mcp-postgres-query
 
+## 0.3.2
+
+### Patch Changes
+
+- 1805381: Bump `@achmadya-dev/mcp-core` to ^0.8.0.
+
 ## 0.3.1
 
 ### Patch Changes
