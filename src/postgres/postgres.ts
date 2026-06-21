@@ -1,6 +1,7 @@
 import pg from "pg";
 import { ToolError } from "@achmadya-dev/mcp-core";
 import config from "./config.js";
+import { formatConnectionError } from "../connection-status.js";
 import * as helpers from "./helpers.js";
 
 export function safeQuery(sql: string, allowedPrefixes: string[]): string {
@@ -23,7 +24,7 @@ export async function checkConnection(): Promise<void> {
     await client.connect();
     await client.query("SELECT 1");
   } catch (e) {
-    throw new Error(`PostgreSQL: ${e instanceof Error ? e.message : String(e)}`);
+    throw new Error(formatConnectionError("PostgreSQL", e));
   } finally {
     await client.end();
   }
