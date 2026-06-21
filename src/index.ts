@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { runMcp } from "@achmadya-dev/mcp-core";
 import packageJson from "../package.json" with { type: "json" };
+import { checkConnection } from "./postgres/postgres.js";
 import { postgres_ddl } from "./tools/postgres_ddl.js";
 import { postgres_delete } from "./tools/postgres_delete.js";
 import { postgres_insert } from "./tools/postgres_insert.js";
@@ -12,4 +13,5 @@ await runMcp({
   version: packageJson.version,
   transport: "stdio",
   tools: [postgres_select, postgres_insert, postgres_update, postgres_delete, postgres_ddl],
+  healthCheck: checkConnection,
 });

@@ -10,6 +10,25 @@ export function safeQuery(sql: string, allowedPrefixes: string[]): string {
   return statement;
 }
 
+export async function checkConnection(): Promise<void> {
+  const client = new pg.Client({
+    host: config.host,
+    port: config.port,
+    user: config.user,
+    password: config.password,
+    database: config.database,
+  });
+
+  try {
+    await client.connect();
+    await client.query("SELECT 1");
+  } catch (e) {
+    throw new Error(`PostgreSQL: ${e instanceof Error ? e.message : String(e)}`);
+  } finally {
+    await client.end();
+  }
+}
+
 export async function runSql(
   sql: string,
   options?: { database?: string }
