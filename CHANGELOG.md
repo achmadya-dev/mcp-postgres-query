@@ -1,5 +1,11 @@
 # @achmadya-dev/mcp-postgres-query
 
+## 0.3.1
+
+### Patch Changes
+
+- 7199ddb: Register a connection_status tool when startup health check fails, with clearer driver error messages.
+
 ## 0.3.0
 
 ### Minor Changes
